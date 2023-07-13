@@ -53,7 +53,7 @@ class _LoginState extends State<Login> {
       _pageController.nextPage(
           duration: Duration(milliseconds: 300), curve: Curves.easeIn);
       setState(() {
-        activePage = 0;
+        activePage++;
       });
     }
   }
