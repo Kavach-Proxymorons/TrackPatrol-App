@@ -65,7 +65,7 @@ class _LoginState extends State<Login> {
         width: 10,
         height: 10,
         decoration: BoxDecoration(
-            color: currentIndex == index ? Colors.black26 : Colors.black54,
+            color: currentIndex == index ? Colors.black54 : Colors.black26,
             shape: BoxShape.circle),
       );
     });
@@ -145,12 +145,55 @@ class _LoginState extends State<Login> {
                     children: indicators(framedata.length, activePage),
                   ),
                   SizedBox(height: 20),
-                  Text(
-                    'Log-In',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 32,
-                      color: Color.fromARGB(180, 7, 0, 0)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Log-In',
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 32,
+                              color: Color.fromARGB(180, 7, 0, 0)),
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          // width: MediaQuery.of(context).size.width,
+                          height: 50,
+                          child: TextField(
+                            obscureText: false,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Username',
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 50,
+                          child: TextField(
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Password',
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        FilledButton(
+                          onPressed: () {},
+                          child: const Text('Submit'),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xff0D76D3),
+                            ),
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                              const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 100),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
