@@ -1,5 +1,7 @@
-import 'package:app/screens/dutiesPage.dart';
+import 'package:Trackpatrol/screens/dutiesPage.dart';
 import 'package:flutter/material.dart';
+
+import 'maps/maps.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,9 +22,10 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/duties',
+      initialRoute: '/mapRender',
       routes: {
         '/duties': (context) => const DutiesPage(),
+        '/mapRender': (context) => const MapRender(),
       },
     );
   }

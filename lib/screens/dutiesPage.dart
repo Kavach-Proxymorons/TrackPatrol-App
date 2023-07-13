@@ -76,7 +76,7 @@ class _DutiesPageState extends State<DutiesPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Text(
@@ -84,7 +84,7 @@ class _DutiesPageState extends State<DutiesPage> {
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w500, color: Colors.black),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         Row(
