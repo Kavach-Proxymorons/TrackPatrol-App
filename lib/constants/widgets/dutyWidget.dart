@@ -21,6 +21,7 @@ class DutyCard extends StatefulWidget {
       required this.flag,
       required this.date});
 
+
   @override
   State<DutyCard> createState() => _DutyCardState();
 }

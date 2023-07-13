@@ -1,57 +1,8 @@
-<<<<<<< HEAD
-import 'package:Trackpatrol/constants/widgets/flagWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-=======
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import '../constants/widgets/mapBottomContainer.dart';
-
->>>>>>> cffc57dc20f717d33eb6c24a2d1e7e559c2536d8
-class MapRender extends StatefulWidget {
-  const MapRender({super.key});
-
-  @override
-  State<MapRender> createState() => _MapRenderState();
-}
-
-class _MapRenderState extends State<MapRender> {
-  late GoogleMapController mapController;
-
-  final LatLng _center = const LatLng(45.521563, -122.677433);
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.green[700],
-      ),
-      home: Scaffold(
-        bottomSheet: MapBottomContainer(
-            date: '07/07/2023',
-            timePeriod: '00:00 am - 09:00 am',
-            location: 'Location'),
-        body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: 11.0,
-          ),
-        ),
-      ),
-    );
-  }
-}
-<<<<<<< HEAD
+import 'buttonForMapBottomSheet.dart';
+import 'flagWidget.dart';
 
 class MapBottomContainer extends StatefulWidget {
   const MapBottomContainer(
@@ -165,43 +116,3 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
     );
   }
 }
-
-class ButtonForBottomSheet extends StatefulWidget {
-  const ButtonForBottomSheet(
-      {super.key,
-      required this.title,
-      required this.color,
-      required this.textColor});
-  final String title;
-  final Color color;
-  final Color textColor;
-
-  @override
-  State<ButtonForBottomSheet> createState() => _ButtonForBottomSheetState();
-}
-
-class _ButtonForBottomSheetState extends State<ButtonForBottomSheet> {
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        height: 49,
-        width: 148,
-        decoration: BoxDecoration(
-          color: widget.color,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Color(0xff0d76d3)),
-        ),
-        child: Center(
-          child: Text(
-            widget.title,
-            style: GoogleFonts.poppins(color: widget.textColor, fontSize: 16),
-          ),
-        ),
-      ),
-    );
-  }
-}
-=======
->>>>>>> cffc57dc20f717d33eb6c24a2d1e7e559c2536d8

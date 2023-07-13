@@ -1,3 +1,4 @@
+import 'package:Trackpatrol/screens/dutiesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:Trackpatrol/screens/loginScreen.dart';
 import 'package:Trackpatrol/screens/dutiesPage.dart';
