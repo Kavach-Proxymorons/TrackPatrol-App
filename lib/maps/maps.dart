@@ -1,16 +1,8 @@
-<<<<<<< HEAD
 import 'package:Trackpatrol/constants/widgets/flagWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-=======
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import '../constants/widgets/mapBottomContainer.dart';
-
->>>>>>> cffc57dc20f717d33eb6c24a2d1e7e559c2536d8
 class MapRender extends StatefulWidget {
   const MapRender({super.key});
 
@@ -51,7 +43,6 @@ class _MapRenderState extends State<MapRender> {
     );
   }
 }
-<<<<<<< HEAD
 
 class MapBottomContainer extends StatefulWidget {
   const MapBottomContainer(
@@ -203,5 +194,3 @@ class _ButtonForBottomSheetState extends State<ButtonForBottomSheet> {
     );
   }
 }
-=======
->>>>>>> cffc57dc20f717d33eb6c24a2d1e7e559c2536d8
