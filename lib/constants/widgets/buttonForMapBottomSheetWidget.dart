@@ -6,10 +6,12 @@ class ButtonForBottomSheet extends StatefulWidget {
       {super.key,
       required this.title,
       required this.color,
-      required this.textColor});
+      required this.textColor,
+      required this.fun});
   final String title;
   final Color color;
   final Color textColor;
+  final Function() fun;
 
   @override
   State<ButtonForBottomSheet> createState() => _ButtonForBottomSheetState();
@@ -19,7 +21,7 @@ class _ButtonForBottomSheetState extends State<ButtonForBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: widget.fun,
       child: Container(
         height: 49,
         width: 148,

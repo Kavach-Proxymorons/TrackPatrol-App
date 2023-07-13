@@ -1,7 +1,6 @@
 import 'package:Trackpatrol/screens/dutiesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:Trackpatrol/screens/loginScreen.dart';
-import 'package:Trackpatrol/screens/dutiesPage.dart';
 import 'package:Trackpatrol/screens/splashScreen.dart';
 
 import 'maps/maps.dart';
@@ -25,7 +24,7 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/splashScreen',
+      initialRoute: '/duties',
       routes: {
         '/login': (context) => Login(), // '/login': (context) => const Login(),
         '/duties': (context) => const DutiesPage(),
