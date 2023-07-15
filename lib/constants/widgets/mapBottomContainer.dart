@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:Trackpatrol/constants/widgets/confirmDialog.dart';
 import 'package:Trackpatrol/maps/maps.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../location_services/getCurrentLocation.dart';
 import 'buttonForMapBottomSheetWidget.dart';
+import 'failedDialog.dart';
 import 'flagWidget.dart';
 
 double? getLat;
@@ -157,51 +159,14 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                             child: Text("Error getting location"));
                       }
                     },
-                    // fun: () async {
-                    //   getUserCurrentLocation().then(
-                    //     (value) async {
-                    //       log(value.latitude.toString() +
-                    //           " " +
-                    //           value.longitude.toString());
-                    //       setState(() {
-                    //         getLat = value.latitude;
-                    //         getLong = value.longitude;
-                    //       });
-                    //       // setState(() {
-                    //       //   // markers.add(Marker(
-                    //       //   //   markerId: MarkerId("2"),
-                    //       //   //   position: LatLng(getLat!, getLong!),
-                    //       //   //   infoWindow: InfoWindow(
-                    //       //   //     title: 'My Current Location',
-                    //       //   //   ),
-                    //       //   // ));
-                    //       // });
-                    //       CameraPosition cameraPosition = new CameraPosition(
-                    //         target: LatLng(value.latitude, value.longitude),
-                    //         zoom: 14,
-                    //       );
-                    //       final GoogleMapController controller =
-                    //           await controllerg.future;
-                    //       controller.animateCamera(
-                    //           CameraUpdate.newCameraPosition(cameraPosition));
-                    //       setState(() {});
-                    //     },
-                    //   ).onError((error, stackTrace) {
-                    //     setState(() {
-                    //       isSuccess = false;
-                    //     });
-                    //   });
-                    //   if (isSuccess) {
-                    //     ScaffoldMessenger(
-                    //         child: Text('Error Getting Location'));
-                    //   }
-                    // },
                     title: 'Check location',
                     color: Colors.white,
                     textColor: Color(0xff0d76d3),
                   ),
                   ButtonForBottomSheet(
-                      fun: () {},
+                      fun: () {
+                        showFailedDialog(context);
+                      },
                       title: 'Start',
                       color: Color(0xff0d76d3),
                       textColor: Colors.white)
@@ -210,7 +175,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
             ],
           ),
         ),
-        Positioned(
+        const Positioned(
             top: 80,
             left: 300,
             child: FlagContainer(flag: 'High', flagColor: Colors.red))
