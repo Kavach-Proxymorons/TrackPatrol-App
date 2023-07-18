@@ -21,7 +21,6 @@ class DutyCard extends StatefulWidget {
       required this.flag,
       required this.date});
 
-
   @override
   State<DutyCard> createState() => _DutyCardState();
 }
@@ -106,11 +105,11 @@ class _DutyCardState extends State<DutyCard> {
             ],
           ),
         ),
-        const Positioned(
+        Positioned(
             top: 120,
             left: 300,
             child: DateContainer(
-              date: '10 April',
+              date: widget.date,
             ))
       ],
     );
