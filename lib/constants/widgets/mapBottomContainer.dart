@@ -1,6 +1,4 @@
 import 'dart:developer';
-
-import 'package:Trackpatrol/constants/widgets/confirmDialog.dart';
 import 'package:Trackpatrol/maps/maps.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';

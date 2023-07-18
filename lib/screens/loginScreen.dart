@@ -1,18 +1,29 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'package:Trackpatrol/models/frame_data.dart';
 
-Timer? timer;
+import '../auth_services/login_service.dart';
+import '../models/login_model.dart';
+import 'dart:developer';
 
-class Login extends StatefulWidget {
-  Login({super.key});
+import 'dutiesPage.dart';
+
+Timer? timer;
+String? username;
+String? password;
+String? token;
+String? name;
+
+class LoginScreen extends StatefulWidget {
+  LoginScreen({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginScreenState extends State<LoginScreen> {
   late PageController _pageController;
   int activePage = 0;
   List<FrameData> framedata = [
@@ -27,10 +38,40 @@ class _LoginState extends State<Login> {
             'Quick access to emergency assistance and alerts for urgent situations.',
         image: 'images/Frame2.png'),
   ];
+  showLoaderDialog(BuildContext context) {
+    AlertDialog alert = AlertDialog(
+      content: Row(
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(
+            width: 10,
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 7),
+            child: const Text("Logging in..."),
+          ),
+        ],
+      ),
+    );
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  late TextEditingController usernameController;
+  late TextEditingController passwordController;
 
   @override
   void initState() {
     super.initState();
+    usernameController = TextEditingController();
+    passwordController = TextEditingController();
+    usernameController.addListener(_printLatestUsername);
+    passwordController.addListener(_printLatestPassword);
     _pageController = PageController(initialPage: 0);
     timer = Timer.periodic(Duration(seconds: 8), (Timer t) => nextPage());
     activePage = 0;
@@ -38,8 +79,34 @@ class _LoginState extends State<Login> {
 
   @override
   void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
     timer?.cancel();
     super.dispose();
+  }
+
+  void _printLatestUsername() {
+    setState(
+      () {
+        username = usernameController.text;
+      },
+    );
+
+    if (kDebugMode) {
+      print(username);
+    }
+  }
+
+  void _printLatestPassword() {
+    setState(
+      () {
+        password = passwordController.text;
+      },
+    );
+
+    if (kDebugMode) {
+      print(password);
+    }
   }
 
   void nextPage() {
@@ -161,6 +228,12 @@ class _LoginState extends State<Login> {
                           // width: MediaQuery.of(context).size.width,
                           height: 50,
                           child: TextField(
+                            controller: usernameController,
+                            onChanged: (value) {
+                              setState(() {
+                                username = value;
+                              });
+                            },
                             obscureText: false,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
@@ -172,6 +245,12 @@ class _LoginState extends State<Login> {
                         SizedBox(
                           height: 50,
                           child: TextField(
+                            controller: passwordController,
+                            onChanged: (value) {
+                              setState(() {
+                                password = value;
+                              });
+                            },
                             obscureText: true,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
@@ -181,7 +260,42 @@ class _LoginState extends State<Login> {
                         ),
                         SizedBox(height: 20),
                         FilledButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (username == null || password == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Provide essential details"),
+                                ),
+                              );
+                            } else {
+                              showLoaderDialog(context);
+                              Login? logData =
+                                  await login(username!, password!);
+                              if (logData != null) {
+                                Navigator.pop(context);
+                                setState(
+                                  () {
+                                    token = logData.data!.token.toString();
+                                    name = logData.data!.user!.name.toString();
+                                  },
+                                );
+                                log(name.toString());
+                                // ignore: use_build_context_synchronously
+
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DutiesPage()));
+                              } else {
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Incorrect details"),
+                                  ),
+                                );
+                              }
+                            }
+                          },
                           child: const Text('Submit'),
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
