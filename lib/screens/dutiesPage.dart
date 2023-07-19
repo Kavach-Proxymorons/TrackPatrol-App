@@ -1,14 +1,16 @@
+import 'dart:developer';
+
 import 'package:Trackpatrol/dutyServices/getAlldutiesService.dart';
 import 'package:Trackpatrol/maps/maps.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/widgets/dutyWidget.dart';
-import '../dutyServices/getAlldutiesService.dart';
 import '../models/allDutiesmodel.dart';
 import 'loginScreen.dart';
 
 bool dutyListEmpty = false;
+String? shiftID;
 
 class DutiesPage extends StatefulWidget {
   const DutiesPage({super.key});
@@ -187,6 +189,19 @@ class _DutiesPageState extends State<DutiesPage> {
                         itemCount: snapshot.data!.data!.shifts!.length,
                         itemBuilder: (context, index) {
                           return DutyCard(
+                              onTap: () {
+                                setState(() {
+                                  shiftID = snapshot
+                                      .data!.data!.shifts![index].sId
+                                      .toString();
+                                });
+                                log(shiftID.toString());
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MapRender()));
+                              },
                               dutyName: snapshot
                                   .data!.data!.shifts![index].duty!.title
                                   .toString(),

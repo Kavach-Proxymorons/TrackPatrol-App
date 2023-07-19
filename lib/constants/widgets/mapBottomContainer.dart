@@ -20,9 +20,9 @@ class MapBottomContainer extends StatefulWidget {
       required this.date,
       required this.timePeriod,
       required this.location});
-  final String date;
-  final String timePeriod;
-  final String location;
+  final Widget date;
+  final Widget timePeriod;
+  final Widget location;
 
   @override
   State<MapBottomContainer> createState() => _MapBottomContainerState();
@@ -81,10 +81,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                   SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    widget.date,
-                    style: GoogleFonts.poppins(),
-                  ),
+                  widget.date
                 ],
               ),
               SizedBox(
@@ -99,10 +96,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                   SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    widget.timePeriod,
-                    style: GoogleFonts.poppins(),
-                  ),
+                  widget.timePeriod
                 ],
               ),
               SizedBox(
@@ -117,10 +111,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                   SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    widget.location,
-                    style: GoogleFonts.poppins(),
-                  ),
+                  widget.location
                 ],
               ),
               SizedBox(
