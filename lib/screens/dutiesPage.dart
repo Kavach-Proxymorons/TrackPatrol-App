@@ -1,8 +1,11 @@
 import 'dart:developer';
 
+import 'package:Trackpatrol/constants/widgets/mapBottomContainer.dart';
 import 'package:Trackpatrol/dutyServices/getAlldutiesService.dart';
+import 'package:Trackpatrol/location_services/getCurrentLocation.dart';
 import 'package:Trackpatrol/maps/maps.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/widgets/dutyWidget.dart';
@@ -11,6 +14,7 @@ import 'loginScreen.dart';
 
 bool dutyListEmpty = false;
 String? shiftID;
+Duration? timePer;
 
 class DutiesPage extends StatefulWidget {
   const DutiesPage({super.key});
@@ -22,12 +26,21 @@ class DutiesPage extends StatefulWidget {
 class _DutiesPageState extends State<DutiesPage> {
   late Future<AllDuties?> fetch;
   GetDutyclass getDutyclass = GetDutyclass();
+  Position? _position;
+  void _getUserloc() async {
+    _position = await getUserCurrentLocation();
+    setState(() {
+      getLat = _position!.latitude;
+      getLong = _position!.longitude;
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetch = getDutyclass.getDuties(token!);
+    _getUserloc();
   }
 
   @override
@@ -188,6 +201,12 @@ class _DutiesPageState extends State<DutiesPage> {
                         shrinkWrap: true,
                         itemCount: snapshot.data!.data!.shifts!.length,
                         itemBuilder: (context, index) {
+                          final startTime = DateTime.parse(snapshot
+                              .data!.data!.shifts![index].startTime
+                              .toString());
+                          final endTime = DateTime.parse(snapshot
+                              .data!.data!.shifts![index].endTime
+                              .toString());
                           return DutyCard(
                               onTap: () {
                                 setState(() {
@@ -203,19 +222,25 @@ class _DutiesPageState extends State<DutiesPage> {
                                             const MapRender()));
                               },
                               dutyName: snapshot
-                                  .data!.data!.shifts![index].duty!.title
+                                  .data!.data!.shifts![index].shiftName
                                   .toString(),
                               location: snapshot
                                   .data!.data!.shifts![index].duty!.venue
                                   .toString(),
-                              timePeriod: "00-00",
+                              timePeriod: "${startTime.hour} - ${endTime.hour}",
                               time: "8 hours",
                               flag: "High",
                               date: DateTime.parse(snapshot
-                                      .data!.data!.shifts![index].startTime
-                                      .toString())
-                                  .day
-                                  .toString());
+                                          .data!.data!.shifts![index].startTime
+                                          .toString())
+                                      .day
+                                      .toString() +
+                                  "/" +
+                                  DateTime.parse(snapshot
+                                          .data!.data!.shifts![index].startTime
+                                          .toString())
+                                      .month
+                                      .toString());
                         })
                   ],
                 ),
