@@ -6,6 +6,7 @@ import 'package:Trackpatrol/screens/splashScreen.dart';
 import 'maps/maps.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -24,9 +25,9 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/duties',
+      initialRoute: '/splashScreen',
       routes: {
-        '/login': (context) => Login(), // '/login': (context) => const Login(),
+        '/login': (context) => LoginScreen(),
         '/duties': (context) => const DutiesPage(),
         '/mapRender': (context) => const MapRender(),
         '/splashScreen': (context) => const SplashScreen(),
