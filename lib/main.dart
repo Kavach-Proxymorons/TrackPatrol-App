@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/splashScreen',
+      initialRoute: '/login',
       routes: {
         '/login': (context) => LoginScreen(),
         '/duties': (context) => const DutiesPage(),
