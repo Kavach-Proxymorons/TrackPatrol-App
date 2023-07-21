@@ -21,14 +21,6 @@ Completer<GoogleMapController> controllerg = Completer();
 bool isLoadingDate = false;
 bool isLoadingLocation = false;
 bool isLoadingTimePeriod = false;
-final List<Marker> markers = <Marker>[
-  Marker(
-      markerId: MarkerId('1'),
-      position: LatLng(20.42796133580664, 75.885749655962),
-      infoWindow: InfoWindow(
-        title: 'My Position',
-      )),
-];
 
 class MapRender extends StatefulWidget {
   const MapRender({super.key});
@@ -40,9 +32,9 @@ class MapRender extends StatefulWidget {
 class _MapRenderState extends State<MapRender> {
   late GoogleMapController mapController;
 
-  static CameraPosition _kGoogle = CameraPosition(
+  static final CameraPosition _kGoogle = CameraPosition(
     target: LatLng(getLat!, getLong!),
-    zoom: 14.4746,
+    zoom: 4,
   );
   late Future<DutyDetailsForDutyID?> fetchDetailDuty;
   Position? position;
@@ -83,7 +75,7 @@ class _MapRenderState extends State<MapRender> {
             isLoadingLocation = false;
             isLoadingTimePeriod = false;
           } else {
-            return Text("error Finding data");
+            return const Text("error Finding data");
           }
           DateTime date =
               DateTime.parse(snapshot.data!.data!.startTime.toString());
@@ -93,13 +85,14 @@ class _MapRenderState extends State<MapRender> {
             dutylongitude = double.parse(latLng![1]);
             geocode(dutylatitude!, dutylongitude!).then((value) {
               setState(() {
-                loc = placemarks![0].name.toString();
+                loc = placemarks![0].locality.toString();
               });
             });
           });
           return MapBottomContainer(
             date: isLoadingDate
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
+                // ignore: prefer_interpolation_to_compose_strings
                 : Text(date.day.toString() +
                     "/" +
                     date.month.toString() +
@@ -107,7 +100,7 @@ class _MapRenderState extends State<MapRender> {
                     date.year.toString()),
             timePeriod: Text("00"),
             location: isLoadingLocation
-                ? CircularProgressIndicator.adaptive()
+                ? const CircularProgressIndicator.adaptive()
                 : Text(loc == null ? "Null" : loc!),
           );
         },
@@ -117,12 +110,17 @@ class _MapRenderState extends State<MapRender> {
         child: GoogleMap(
             myLocationEnabled: true,
             // markers: Set<Marker>.of(markers),
+            // ignore: prefer_collection_literals
             markers: Set<Marker>.of([
               Marker(
                 markerId: MarkerId("Duty Location"),
                 position: LatLng(
-                    dutylatitude == null ? 28.14785235 : dutylatitude!,
-                    dutylongitude == null ? 87.1478965254 : dutylongitude!),
+                    dutylatitude == null
+                        ? 37.422346754908716
+                        : dutylatitude!, // for null, location are of googleplex
+                    dutylongitude == null
+                        ? -122.08434719141799
+                        : dutylongitude!),
               ),
               Marker(
                 visible: true,
