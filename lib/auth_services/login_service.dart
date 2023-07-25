@@ -3,9 +3,10 @@ import 'dart:developer';
 import '../../models/login_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../constants/links/apiProductionLink.dart';
+
 Future<Login?> login(String username, String password) async {
-  var response = await http.post(
-      Uri.parse("https://trackpatrol.onrender.com/api/v1/auth/login"),
+  var response = await http.post(Uri.parse("$prodLink/api/v1/auth/login"),
       body: jsonEncode({"username": username, "password": password}),
       headers: {'Content-Type': 'application/json'});
   if (response.statusCode == 200) {

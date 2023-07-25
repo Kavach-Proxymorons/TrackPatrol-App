@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:Trackpatrol/constants/widgets/confirmDialog.dart';
 import 'package:Trackpatrol/dutyServices/startDutyService.dart';
@@ -10,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../dutyServices/pushLocationService.dart';
 import '../../location_services/getCurrentLocation.dart';
 import '../../screens/dutiesPage.dart';
 import '../../screens/loginScreen.dart';
@@ -37,6 +39,28 @@ class MapBottomContainer extends StatefulWidget {
 }
 
 class _MapBottomContainerState extends State<MapBottomContainer> {
+  // Inside your StatefulWidget or StatelessWidget
+// or wherever you want to start the repeated function call
+  Timer? timer;
+  void startRepeatedFunctionCall() {
+    timer = Timer.periodic(Duration(seconds: 20), (Timer t) {
+      pushLoc(token!, shiftID!); // Call your function here
+    });
+  }
+
+  void stopRepeatedFunctionCall() {
+    if (timer!.isActive && timer != null) {
+      timer!.cancel();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // Cancel the Timer when the widget is disposed
+    stopRepeatedFunctionCall();
+  }
+
   showLoaderDialog(BuildContext ctx, String msg) {
     AlertDialog alert = AlertDialog(
       content: Row(
@@ -181,6 +205,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                         shiftID!,
                                         currentDateTime.toUtc().toString());
                                     if (dutyStartedModel != null) {
+                                      startRepeatedFunctionCall();
                                       Navigator.pop(context);
                                       showConfirmDialog(context);
                                       setState(() {
@@ -199,7 +224,9 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                     DutyStoppedModel? dutyStoppedModel =
                                         await stopDuty(token!, shiftID!,
                                             currentDateTime.toUtc().toString());
+
                                     if (dutyStoppedModel != null) {
+                                      stopRepeatedFunctionCall();
                                       Navigator.pop(context);
                                       setState(() {
                                         dutyStarted = false;
