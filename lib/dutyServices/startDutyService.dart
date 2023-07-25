@@ -1,14 +1,14 @@
 import 'dart:developer';
 
 import 'dart:convert';
+import 'package:Trackpatrol/constants/links/apiProductionLink.dart';
 import 'package:http/http.dart' as http;
 import '../models/dutyStartedModel.dart';
 
 Future<DutyStartedModel?> startDuty(
     String token, String shiftID, String time) async {
   var response = await http.post(
-      Uri.parse(
-          "https://trackpatrol.onrender.com/api/v1/app/duty/$shiftID/start_duty"),
+      Uri.parse("$prodLink/api/v1/app/duty/$shiftID/start_duty"),
       body: jsonEncode({'time': time}),
       headers: {
         'Content-Type': 'application/json',

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:Trackpatrol/constants/links/apiProductionLink.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/dutyDetailmodel.dart';
 
 Future<DutyDetailsForDutyID?> getDutiesDetail(
     String token, String shiftID) async {
-  var response = await http.get(
-      Uri.parse("https://trackpatrol.onrender.com/api/v1/app/duty/$shiftID"),
+  var response = await http.get(Uri.parse("$prodLink/api/v1/app/duty/$shiftID"),
       headers: {'Authorization': 'Bearer $token'});
   if (response.statusCode == 200) {
     log(response.body);
