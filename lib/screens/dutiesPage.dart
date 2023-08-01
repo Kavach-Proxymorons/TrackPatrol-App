@@ -1,16 +1,15 @@
 import 'dart:developer';
 
-import 'package:Trackpatrol/constants/widgets/mapBottomContainer.dart';
 import 'package:Trackpatrol/dutyServices/getAlldutiesService.dart';
-import 'package:Trackpatrol/location_services/getCurrentLocation.dart';
 import 'package:Trackpatrol/maps/maps.dart';
+import 'package:Trackpatrol/providers/authProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/widgets/dutyWidget.dart';
 import '../models/allDutiesmodel.dart';
-import 'loginScreen.dart';
+import '../providers/locationProvider.dart';
 
 bool dutyListEmpty = false;
 String? shiftID;
@@ -26,21 +25,22 @@ class DutiesPage extends StatefulWidget {
 class _DutiesPageState extends State<DutiesPage> {
   late Future<AllDuties?> fetch;
   GetDutyclass getDutyclass = GetDutyclass();
-  Position? _position;
-  void _getUserloc() async {
-    _position = await getUserCurrentLocation();
-    setState(() {
-      getLat = _position!.latitude;
-      getLong = _position!.longitude;
-    });
-  }
+  // Position? _position;
+  // void _getUserloc() async {
+  //   _position = await getUserCurrentLocation();
+  //   setState(() {
+  //     getLat = _position!.latitude;
+  //     getLong = _position!.longitude;
+  //   });
+  // }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetch = getDutyclass.getDuties(token!);
-    _getUserloc();
+    fetch = getDutyclass.getDuties(
+        Provider.of<AuthProvider>(context, listen: false).token.toString());
+    Provider.of<LocationProvider>(context, listen: false).getposition();
   }
 
   @override
@@ -76,6 +76,7 @@ class _DutiesPageState extends State<DutiesPage> {
               }
             }
             return SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               child: Padding(
                 padding: EdgeInsets.only(left: 10, right: 10),
                 child: Column(

@@ -10,9 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../dutyServices/pushLocationService.dart';
 import '../../location_services/getCurrentLocation.dart';
+import '../../providers/dutyTimerProvider.dart';
 import '../../screens/dutiesPage.dart';
 import '../../screens/loginScreen.dart';
 import 'buttonForMapBottomSheetWidget.dart';
@@ -89,6 +91,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
   DutyStartedModel? dutyStartedModel;
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<DutyTimerProvider>(context, listen: false);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -205,7 +208,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                         shiftID!,
                                         currentDateTime.toUtc().toString());
                                     if (dutyStartedModel != null) {
-                                      startRepeatedFunctionCall();
+                                      provider.startRepeatedFunctionCall();
                                       Navigator.pop(context);
                                       showConfirmDialog(context);
                                       setState(() {
@@ -226,7 +229,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                             currentDateTime.toUtc().toString());
 
                                     if (dutyStoppedModel != null) {
-                                      stopRepeatedFunctionCall();
+                                      provider.stopPushingGPS();
                                       Navigator.pop(context);
                                       setState(() {
                                         dutyStarted = false;

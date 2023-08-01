@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:Trackpatrol/location_services/getCurrentLocation.dart';
+import 'package:Trackpatrol/providers/authProvider.dart';
 import 'package:Trackpatrol/screens/dutiesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/widgets/mapBottomContainer.dart';
 import '../dutyServices/getDutyDetails.dart';
 import '../models/dutyDetailmodel.dart';
+import '../providers/locationProvider.dart';
 import '../screens/loginScreen.dart';
 
 import 'package:geocoding/geocoding.dart';
@@ -32,27 +35,35 @@ class MapRender extends StatefulWidget {
 class _MapRenderState extends State<MapRender> {
   late GoogleMapController mapController;
 
-  static final CameraPosition _kGoogle = CameraPosition(
-    target: LatLng(getLat!, getLong!),
-    zoom: 4,
-  );
   late Future<DutyDetailsForDutyID?> fetchDetailDuty;
   Position? position;
   void _getMyLoc() async {
     position = await getUserCurrentLocation();
   }
 
+  static double? latitude = 1;
+  static double? longitude = 1;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchDetailDuty = getDutiesDetail(token!, shiftID!);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getMyLoc();
-      log(getLat.toString());
-      log(getLong.toString());
-    });
+    fetchDetailDuty = getDutiesDetail(
+        Provider.of<AuthProvider>(context, listen: false).token.toString(),
+        shiftID!);
+    latitude = Provider.of<LocationProvider>(context, listen: false).latitude;
+    longitude = Provider.of<LocationProvider>(context, listen: false).longitude;
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _getMyLoc();
+    //   log(getLat.toString());
+    //   log(getLong.toString());
+    // });
   }
+
+  static final CameraPosition _kGoogle = CameraPosition(
+    target: LatLng(latitude!, longitude!),
+    zoom: 4,
+  );
 
   List<Placemark>? placemarks;
   Future<void> geocode(double lat, double long) async {
@@ -61,6 +72,7 @@ class _MapRenderState extends State<MapRender> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<LocationProvider>(context, listen: false);
     return Scaffold(
       bottomSheet: FutureBuilder(
         future: fetchDetailDuty,
@@ -125,7 +137,7 @@ class _MapRenderState extends State<MapRender> {
               Marker(
                 visible: true,
                 markerId: MarkerId("My Location"),
-                position: LatLng(getLat!, getLong!),
+                position: LatLng(provider.latitude!, provider.longitude!),
               ),
             ]),
             onMapCreated: (GoogleMapController controller) {

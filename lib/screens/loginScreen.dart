@@ -1,8 +1,10 @@
+import 'package:Trackpatrol/providers/authProvider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'package:Trackpatrol/models/frame_data.dart';
+import 'package:provider/provider.dart';
 
 import '../auth_services/login_service.dart';
 import '../models/login_model.dart';
@@ -140,6 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -269,19 +272,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                             } else {
                               showLoaderDialog(context);
-                              Login? logData =
-                                  await login(username!, password!);
-                              if (logData != null) {
+                              await provider.dologin(username!, password!);
+                              if (provider.loginData != null) {
                                 Navigator.pop(context);
-                                setState(
-                                  () {
-                                    token = logData.data!.token.toString();
-                                    name = logData.data!.user!.name.toString();
-                                  },
-                                );
-                                log(name.toString());
-                                // ignore: use_build_context_synchronously
-
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(

@@ -1,13 +1,26 @@
+import 'package:Trackpatrol/providers/authProvider.dart';
+import 'package:Trackpatrol/providers/dutyTimerProvider.dart';
+import 'package:Trackpatrol/providers/locationProvider.dart';
 import 'package:Trackpatrol/screens/dutiesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:Trackpatrol/screens/loginScreen.dart';
 import 'package:Trackpatrol/screens/splashScreen.dart';
+import 'package:provider/provider.dart';
 
 import 'maps/maps.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ChangeNotifierProvider<DutyTimerProvider>(
+          create: (_) => DutyTimerProvider()),
+      ChangeNotifierProvider(create: (_) => LocationProvider()),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
