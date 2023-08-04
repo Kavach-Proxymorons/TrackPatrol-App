@@ -93,8 +93,8 @@ class _DutiesPageState extends State<DutiesPage> {
                       height: 10,
                     ),
                     InkWell(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => MapRender()));
@@ -200,6 +200,7 @@ class _DutiesPageState extends State<DutiesPage> {
                           );
                         },
                         shrinkWrap: true,
+                        primary: false,
                         itemCount: snapshot.data!.data!.shifts!.length,
                         itemBuilder: (context, index) {
                           final startTime = DateTime.parse(snapshot

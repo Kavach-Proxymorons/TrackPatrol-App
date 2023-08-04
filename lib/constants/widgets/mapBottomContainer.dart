@@ -11,9 +11,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../../dutyServices/pushLocationService.dart';
 import '../../location_services/getCurrentLocation.dart';
+import '../../main.dart';
+import '../../providers/authProvider.dart';
 import '../../providers/dutyTimerProvider.dart';
 import '../../screens/dutiesPage.dart';
 import '../../screens/loginScreen.dart';
@@ -91,7 +94,10 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
   DutyStartedModel? dutyStartedModel;
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DutyTimerProvider>(context, listen: false);
+    final providerTimer =
+        Provider.of<DutyTimerProvider>(context, listen: false);
+    final providerauth = Provider.of<AuthProvider>(context, listen: true);
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -204,11 +210,16 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                         context, "Starting your duty...");
                                     log(currentDateTime.toUtc().toString());
                                     dutyStartedModel = await startDuty(
-                                        token!,
+                                        providerauth.token!,
                                         shiftID!,
                                         currentDateTime.toUtc().toString());
                                     if (dutyStartedModel != null) {
-                                      provider.startRepeatedFunctionCall();
+                                      // providerTimer
+                                      //     .startRepeatedFunctionCall(context);
+                                      await Workmanager().initialize(
+                                          // ignore: use_build_context_synchronously
+                                          callbackDispatcher(context),
+                                          isInDebugMode: true);
                                       Navigator.pop(context);
                                       showConfirmDialog(context);
                                       setState(() {
@@ -225,11 +236,13 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                     showLoaderDialog(
                                         context, "Stopping your duty...");
                                     DutyStoppedModel? dutyStoppedModel =
-                                        await stopDuty(token!, shiftID!,
+                                        await stopDuty(
+                                            providerauth.token!,
+                                            shiftID!,
                                             currentDateTime.toUtc().toString());
 
                                     if (dutyStoppedModel != null) {
-                                      provider.stopPushingGPS();
+                                      providerTimer.stopPushingGPS();
                                       Navigator.pop(context);
                                       setState(() {
                                         dutyStarted = false;
