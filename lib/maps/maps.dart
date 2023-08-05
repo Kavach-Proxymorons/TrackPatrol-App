@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:Trackpatrol/location_services/getCurrentLocation.dart';
 import 'package:Trackpatrol/providers/authProvider.dart';
-import 'package:Trackpatrol/screens/dutiesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,7 +10,6 @@ import '../constants/widgets/mapBottomContainer.dart';
 import '../dutyServices/getDutyDetails.dart';
 import '../models/dutyDetailmodel.dart';
 import '../providers/locationProvider.dart';
-import '../screens/loginScreen.dart';
 
 import 'package:geocoding/geocoding.dart';
 
@@ -50,7 +47,7 @@ class _MapRenderState extends State<MapRender> {
     super.initState();
     fetchDetailDuty = getDutiesDetail(
         Provider.of<AuthProvider>(context, listen: false).token.toString(),
-        shiftID!);
+        Provider.of<AuthProvider>(context, listen: false).shiftID.toString()!);
     latitude = Provider.of<LocationProvider>(context, listen: false).latitude;
     longitude = Provider.of<LocationProvider>(context, listen: false).longitude;
     // WidgetsBinding.instance.addPostFrameCallback((_) {

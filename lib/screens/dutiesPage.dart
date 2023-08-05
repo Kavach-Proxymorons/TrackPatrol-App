@@ -13,7 +13,6 @@ import '../models/allDutiesmodel.dart';
 import '../providers/locationProvider.dart';
 
 bool dutyListEmpty = false;
-String? shiftID;
 Duration? timePer;
 
 class DutiesPage extends StatefulWidget {
@@ -27,21 +26,11 @@ class _DutiesPageState extends State<DutiesPage> {
   late Future<AllDuties?> fetch;
   GetDutyclass getDutyclass = GetDutyclass();
 
-  // Position? _position;
-  // void _getUserloc() async {
-  //   _position = await getUserCurrentLocation();
-  //   setState(() {
-  //     getLat = _position!.latitude;
-  //     getLong = _position!.longitude;
-  //   });
-  // }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Provider.of<AuthProvider>(context, listen: false).getPrefs();
-
     Provider.of<LocationProvider>(context, listen: false).getposition();
   }
 
@@ -224,12 +213,15 @@ class _DutiesPageState extends State<DutiesPage> {
                               .toString());
                           return DutyCard(
                               onTap: () {
-                                setState(() {
-                                  shiftID = snapshot
-                                      .data!.data!.shifts![index].sId
-                                      .toString();
-                                });
-                                log(shiftID.toString());
+                                provider.updateShiftID(snapshot
+                                    .data!.data!.shifts![index].sId
+                                    .toString());
+                                // setState(() {
+                                //   shiftID = snapshot
+                                //       .data!.data!.shifts![index].sId
+                                //       .toString();
+                                // });
+                                log(provider.shiftID.toString());
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(

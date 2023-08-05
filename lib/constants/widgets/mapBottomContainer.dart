@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 import 'package:Trackpatrol/constants/widgets/confirmDialog.dart';
 import 'package:Trackpatrol/dutyServices/startDutyService.dart';
@@ -12,14 +11,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../background-svc/background-handler.dart';
-import '../../dutyServices/pushLocationService.dart';
 import '../../location_services/getCurrentLocation.dart';
 import '../../providers/authProvider.dart';
 import '../../providers/dutyTimerProvider.dart';
-import '../../screens/dutiesPage.dart';
-import '../../screens/loginScreen.dart';
 import 'buttonForMapBottomSheetWidget.dart';
 import 'failedDialog.dart';
 import 'flagWidget.dart';
@@ -27,7 +24,6 @@ import 'flagWidget.dart';
 double? getLat;
 double? getLong;
 bool isSuccess = true;
-bool dutyStarted = false;
 
 class MapBottomContainer extends StatefulWidget {
   const MapBottomContainer(
@@ -44,28 +40,6 @@ class MapBottomContainer extends StatefulWidget {
 }
 
 class _MapBottomContainerState extends State<MapBottomContainer> {
-  // Inside your StatefulWidget or StatelessWidget
-// or wherever you want to start the repeated function call
-  Timer? timer;
-  void startRepeatedFunctionCall() {
-    timer = Timer.periodic(Duration(seconds: 20), (Timer t) {
-      pushLoc(token!, shiftID!); // Call your function here
-    });
-  }
-
-  void stopRepeatedFunctionCall() {
-    if (timer!.isActive && timer != null) {
-      timer!.cancel();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    // Cancel the Timer when the widget is disposed
-    stopRepeatedFunctionCall();
-  }
-
   showLoaderDialog(BuildContext ctx, String msg) {
     AlertDialog alert = AlertDialog(
       content: Row(
@@ -94,8 +68,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
   DutyStartedModel? dutyStartedModel;
   @override
   Widget build(BuildContext context) {
-    final providerTimer =
-        Provider.of<DutyTimerProvider>(context, listen: false);
+    final providerTimer = Provider.of<DutyTimerProvider>(context, listen: true);
     final providerauth = Provider.of<AuthProvider>(context, listen: true);
 
     return SingleChildScrollView(
@@ -202,30 +175,41 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                           textColor: Color(0xff0d76d3),
                         ),
                         ButtonForBottomSheet(
-                            fun: dutyStarted == false
+                            fun: providerTimer.dutyStarted == "false"
                                 ? () async {
                                     DateTime currentDateTime =
                                         DateTime.now().toUtc();
                                     showLoaderDialog(
                                         context, "Starting your duty...");
-                                    log(currentDateTime.toUtc().toString());
-
+                                    SharedPreferences _prefs =
+                                        await SharedPreferences.getInstance();
+                                    _prefs.setString('shiftID',
+                                        providerauth.shiftID.toString());
                                     dutyStartedModel = await startDuty(
                                         providerauth.token!,
-                                        shiftID!,
+                                        providerauth.shiftID!,
                                         currentDateTime.toUtc().toString());
                                     if (dutyStartedModel != null) {
-                                      initializeService();
+                                      initializeService(context);
                                       // ignore: use_build_context_synchronously
+                                      FlutterBackgroundService().invoke(
+                                        'setAsForeground',
+                                      );
                                       FlutterBackgroundService()
-                                          .invoke('setAsForeground');
+                                          .invoke('setAsBackground');
                                       providerTimer
                                           .startRepeatedFunctionCall(context);
                                       // ignore: use_build_context_synchronously
+
                                       Navigator.pop(context);
                                       showConfirmDialog(context);
                                       setState(() {
-                                        dutyStarted = true;
+                                        providerTimer
+                                            .updateDutyStartFlag("true");
+                                        _prefs.setString(
+                                            'dutyStarted',
+                                            providerTimer.dutyStarted
+                                                .toString());
                                       });
                                     } else {
                                       Navigator.pop(context);
@@ -237,10 +221,12 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                         DateTime.now().toUtc();
                                     showLoaderDialog(
                                         context, "Stopping your duty...");
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
                                     DutyStoppedModel? dutyStoppedModel =
                                         await stopDuty(
                                             providerauth.token!,
-                                            shiftID!,
+                                            providerauth.shiftID!,
                                             currentDateTime.toUtc().toString());
 
                                     if (dutyStoppedModel != null) {
@@ -249,7 +235,12 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                       providerTimer.stopPushingGPS();
                                       Navigator.pop(context);
                                       setState(() {
-                                        dutyStarted = false;
+                                        providerTimer
+                                            .updateDutyStartFlag("false");
+                                        prefs.setString(
+                                            'dutyStarted',
+                                            providerTimer.dutyStarted
+                                                .toString());
                                       });
                                       Navigator.pop(context);
                                     } else {
@@ -257,7 +248,9 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                       showFailedDialog(context);
                                     }
                                   },
-                            title: dutyStarted == false ? 'Start' : 'Stop',
+                            title: providerTimer.dutyStarted == "false"
+                                ? 'Start'
+                                : 'Stop',
                             color: Color(0xff0d76d3),
                             textColor: Colors.white)
                       ],
