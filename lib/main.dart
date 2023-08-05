@@ -1,3 +1,4 @@
+import 'package:Trackpatrol/background-svc/background-handler.dart';
 import 'package:Trackpatrol/providers/authProvider.dart';
 import 'package:Trackpatrol/providers/dutyTimerProvider.dart';
 import 'package:Trackpatrol/providers/locationProvider.dart';
@@ -6,11 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:Trackpatrol/screens/loginScreen.dart';
 import 'package:Trackpatrol/screens/splashScreen.dart';
 import 'package:provider/provider.dart';
-import 'package:workmanager/workmanager.dart';
 import 'maps/maps.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => AuthProvider()),
@@ -20,21 +27,6 @@ void main() {
     ],
     child: MyApp(),
   ));
-}
-
-const fetchBackground = "fetchBackground";
-
-@pragma('vm:entry-point')
-dynamic callbackDispatcher(BuildContext context) {
-  final provider = Provider.of<DutyTimerProvider>(context, listen: false);
-  Workmanager().executeTask((task, inputData) async {
-    switch (task) {
-      case fetchBackground:
-        provider.startRepeatedFunctionCall(context);
-        break;
-    }
-    return Future.value(true);
-  });
 }
 
 class MyApp extends StatefulWidget {

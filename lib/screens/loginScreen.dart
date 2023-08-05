@@ -6,10 +6,6 @@ import 'dart:async';
 import 'package:Trackpatrol/models/frame_data.dart';
 import 'package:provider/provider.dart';
 
-import '../auth_services/login_service.dart';
-import '../models/login_model.dart';
-import 'dart:developer';
-
 import 'dutiesPage.dart';
 
 Timer? timer;

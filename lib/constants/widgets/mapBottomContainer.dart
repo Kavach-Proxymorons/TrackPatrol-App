@@ -7,15 +7,15 @@ import 'package:Trackpatrol/maps/maps.dart';
 import 'package:Trackpatrol/models/dutyStartedModel.dart';
 import 'package:Trackpatrol/models/dutyStoppedModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:workmanager/workmanager.dart';
 
+import '../../background-svc/background-handler.dart';
 import '../../dutyServices/pushLocationService.dart';
 import '../../location_services/getCurrentLocation.dart';
-import '../../main.dart';
 import '../../providers/authProvider.dart';
 import '../../providers/dutyTimerProvider.dart';
 import '../../screens/dutiesPage.dart';
@@ -209,17 +209,19 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                     showLoaderDialog(
                                         context, "Starting your duty...");
                                     log(currentDateTime.toUtc().toString());
+
                                     dutyStartedModel = await startDuty(
                                         providerauth.token!,
                                         shiftID!,
                                         currentDateTime.toUtc().toString());
                                     if (dutyStartedModel != null) {
-                                      // providerTimer
-                                      //     .startRepeatedFunctionCall(context);
-                                      await Workmanager().initialize(
-                                          // ignore: use_build_context_synchronously
-                                          callbackDispatcher(context),
-                                          isInDebugMode: true);
+                                      initializeService();
+                                      // ignore: use_build_context_synchronously
+                                      FlutterBackgroundService()
+                                          .invoke('setAsForeground');
+                                      providerTimer
+                                          .startRepeatedFunctionCall(context);
+                                      // ignore: use_build_context_synchronously
                                       Navigator.pop(context);
                                       showConfirmDialog(context);
                                       setState(() {
@@ -242,6 +244,8 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                             currentDateTime.toUtc().toString());
 
                                     if (dutyStoppedModel != null) {
+                                      FlutterBackgroundService()
+                                          .invoke('stopService');
                                       providerTimer.stopPushingGPS();
                                       Navigator.pop(context);
                                       setState(() {
