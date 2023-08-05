@@ -1,4 +1,3 @@
-import 'package:Trackpatrol/background-svc/background-handler.dart';
 import 'package:Trackpatrol/providers/authProvider.dart';
 import 'package:Trackpatrol/providers/dutyTimerProvider.dart';
 import 'package:Trackpatrol/providers/locationProvider.dart';
@@ -7,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:Trackpatrol/screens/loginScreen.dart';
 import 'package:Trackpatrol/screens/splashScreen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'maps/maps.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -17,16 +17,21 @@ void main() async {
       Permission.notification.request();
     }
   });
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var tokenPrefs = prefs.getString('token');
 
   runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => AuthProvider()),
-      ChangeNotifierProvider<DutyTimerProvider>(
-          create: (_) => DutyTimerProvider()),
-      ChangeNotifierProvider(create: (_) => LocationProvider()),
-    ],
-    child: MyApp(),
-  ));
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider<DutyTimerProvider>(
+            create: (_) => DutyTimerProvider()),
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
+      ],
+      child: MaterialApp(
+        theme: ThemeData(useMaterial3: true),
+        debugShowCheckedModeBanner: false,
+        home: tokenPrefs == null ? LoginScreen() : DutiesPage(),
+      )));
 }
 
 class MyApp extends StatefulWidget {
@@ -44,7 +49,7 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
+      initialRoute: '/duties',
       routes: {
         '/login': (context) => LoginScreen(),
         '/duties': (context) => const DutiesPage(),

@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 
 import '../dutyServices/pushLocationService.dart';
 import '../screens/dutiesPage.dart';
-import '../screens/loginScreen.dart';
 
 class DutyTimerProvider with ChangeNotifier {
   Timer? timer;

@@ -6,6 +6,7 @@ import 'package:Trackpatrol/providers/authProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/widgets/dutyWidget.dart';
 import '../models/allDutiesmodel.dart';
@@ -25,6 +26,7 @@ class DutiesPage extends StatefulWidget {
 class _DutiesPageState extends State<DutiesPage> {
   late Future<AllDuties?> fetch;
   GetDutyclass getDutyclass = GetDutyclass();
+
   // Position? _position;
   // void _getUserloc() async {
   //   _position = await getUserCurrentLocation();
@@ -38,18 +40,29 @@ class _DutiesPageState extends State<DutiesPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetch = getDutyclass.getDuties(
-        Provider.of<AuthProvider>(context, listen: false).token.toString());
+    Provider.of<AuthProvider>(context, listen: false).getPrefs();
+
     Provider.of<LocationProvider>(context, listen: false).getposition();
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AuthProvider>(context, listen: true);
+    fetch = getDutyclass.getDuties(provider.token.toString());
     return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.menu),
-        actions: const [
+        actions: [
           Icon(Icons.account_circle_rounded),
+          InkWell(
+            onTap: () async {
+              await provider.logout(context);
+            },
+            child: Text(
+              'Logout',
+              style: GoogleFonts.poppins(fontSize: 8),
+            ),
+          ),
           SizedBox(
             width: 10,
           )
