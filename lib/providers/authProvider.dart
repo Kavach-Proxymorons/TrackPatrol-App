@@ -33,7 +33,9 @@ class AuthProvider with ChangeNotifier {
 
   getPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token').toString();
+    if (prefs.getString('token') != null) {
+      token = prefs.getString('token').toString();
+    }
     log(token.toString());
     notifyListeners();
   }
