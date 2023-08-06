@@ -1,3 +1,4 @@
+import 'package:Trackpatrol/app.dart';
 import 'package:Trackpatrol/providers/authProvider.dart';
 import 'package:Trackpatrol/providers/dutyTimerProvider.dart';
 import 'package:Trackpatrol/providers/locationProvider.dart';
@@ -30,7 +31,7 @@ void main() async {
       child: MaterialApp(
         theme: ThemeData(useMaterial3: true),
         debugShowCheckedModeBanner: false,
-        home: tokenPrefs == null ? LoginScreen() : DutiesPage(),
+        home: tokenPrefs == null ? LoginScreen() : BuildTab(),
       )));
 }
 
