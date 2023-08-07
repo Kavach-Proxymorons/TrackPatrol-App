@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:Trackpatrol/models/frame_data.dart';
 import 'package:provider/provider.dart';
 
+import '../app.dart';
 import 'dutiesPage.dart';
 
 Timer? timer;
@@ -274,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => DutiesPage()));
+                                        builder: (context) => BuildTab()));
                               } else {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(

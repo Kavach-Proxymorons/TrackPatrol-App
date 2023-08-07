@@ -11,15 +11,9 @@ class Issues extends StatefulWidget {
 class _IssuesState extends State<Issues> {
   @override
   Widget build(BuildContext context) {
+    String dropdownValue = 'Select Category';
     return Scaffold(
-      floatingActionButton: FloatingActionButton.large(
-        onPressed: () {},
-        backgroundColor: Colors.red,
-        child: Text(
-          "SOS",
-          style: GoogleFonts.poppins(color: Colors.white, fontSize: 22),
-        ),
-      ),
+      bottomSheet: buildBottomSheet(),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -33,11 +27,42 @@ class _IssuesState extends State<Issues> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Issue", style: GoogleFonts.poppins(color: Colors.black)),
+            DropdownButton<String>(
+              // Step 3.
+              value: dropdownValue,
+              // Step 4.
+              items: <String>[
+                'Select Category',
+                'Internet Issue',
+                'Network Issue',
+                'Battery Issue',
+                'Crowd Issue',
+                'Others',
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(
+                    value,
+                    style:
+                        GoogleFonts.poppins(fontSize: 15, color: Colors.grey),
+                  ),
+                );
+              }).toList(),
+              // Step 5.
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+              },
+            ),
+            SizedBox(height: 20),
+            Text("Description",
+                style: GoogleFonts.poppins(color: Colors.black)),
             TextFormField(
               decoration: InputDecoration(
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 50, horizontal: 10),
-                  hintText: "Description",
+                  hintText: "I have a problem regarding...",
                   hintStyle: GoogleFonts.poppins(),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black))),
@@ -60,20 +85,50 @@ class _IssuesState extends State<Issues> {
                 ),
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                    flex: -50,
-                    child: Container(
-                      padding: EdgeInsets.all(40),
-                      child: Text("data"),
-                    ))
-              ],
-            )
           ],
         ),
       ),
     );
   }
+}
+
+Widget buildBottomSheet() {
+  return Container(
+    height: 203,
+    width: double.infinity,
+    padding: EdgeInsets.all(20),
+    child: Column(
+      children: [
+        Text(
+          "Press and hold button for 3 seconds",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        SizedBox(
+          height: 30,
+        ),
+        Row(
+          children: [
+            Container(
+              height: 60,
+              width: 200,
+              child: Text(
+                "SOS Button will immidiately send a distress signal to the authority.",
+                overflow: TextOverflow.visible,
+                style: GoogleFonts.poppins(),
+              ),
+            ),
+            SizedBox(width: 40),
+            FloatingActionButton.large(
+              backgroundColor: Colors.red,
+              onPressed: () {},
+              child: Text(
+                "SOS",
+                style: GoogleFonts.poppins(fontSize: 30),
+              ),
+            )
+          ],
+        ),
+      ],
+    ),
+  );
 }

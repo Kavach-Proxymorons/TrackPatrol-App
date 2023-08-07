@@ -50,17 +50,17 @@ class _BuildTabState extends State<BuildTab> {
               duration: Duration(milliseconds: 400),
               tabBackgroundColor: Colors.grey[100]!,
               color: Colors.black,
-              tabs: const [
+              tabs: [
                 GButton(
-                  icon: LineIcons.home,
+                  icon: Icons.home,
                   text: 'Home',
                 ),
                 GButton(
-                  icon: LineIcons.search,
+                  icon: Icons.wifi_protected_setup_sharp,
                   text: 'Ongoing Duties',
                 ),
                 GButton(
-                  icon: LineIcons.search,
+                  icon: Icons.info_sharp,
                   text: 'Issues',
                 ),
               ],
