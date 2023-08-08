@@ -14,7 +14,7 @@ class DutyTimerProvider with ChangeNotifier {
   void startRepeatedFunctionCall(BuildContext context) {
     final provider = Provider.of<AuthProvider>(context, listen: false);
 
-    timer = Timer.periodic(const Duration(seconds: 10), (Timer t) {
+    timer = Timer.periodic(const Duration(seconds: 7), (Timer t) {
       pushLoc(provider.token!, provider.shiftID!); // Call your function here
     });
     notifyListeners();

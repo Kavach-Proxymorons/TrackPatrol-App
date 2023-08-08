@@ -78,6 +78,7 @@ class _MapRenderState extends State<MapRender> {
             isLoadingDate = true;
             isLoadingLocation = true;
             isLoadingTimePeriod = true;
+
             return Container();
           } else if (snapshot.connectionState == ConnectionState.done) {
             isLoadingDate = false;

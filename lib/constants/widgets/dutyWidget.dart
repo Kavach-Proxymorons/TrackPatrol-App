@@ -36,7 +36,7 @@ class _DutyCardState extends State<DutyCard> {
         children: [
           Image.asset('images/1.png'),
           Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -46,7 +46,7 @@ class _DutyCardState extends State<DutyCard> {
                       fontSize: 18, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 8,
                 ),
                 Row(
                   children: <Widget>[
@@ -65,7 +65,7 @@ class _DutyCardState extends State<DutyCard> {
                   ],
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 8,
                 ),
                 Row(
                   children: <Widget>[
@@ -84,7 +84,7 @@ class _DutyCardState extends State<DutyCard> {
                   ],
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 8,
                 ),
                 Row(
                   children: <Widget>[
@@ -103,7 +103,7 @@ class _DutyCardState extends State<DutyCard> {
                   ],
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 10,
                 ),
                 FlagContainer(flag: 'High', flagColor: Colors.red)
               ],
@@ -111,7 +111,7 @@ class _DutyCardState extends State<DutyCard> {
           ),
           Positioned(
               top: 120,
-              left: 300,
+              left: 280,
               child: DateContainer(
                 date: widget.date,
               ))

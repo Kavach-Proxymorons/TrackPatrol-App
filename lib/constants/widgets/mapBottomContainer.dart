@@ -252,7 +252,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                 ? 'Start'
                                 : 'Stop',
                             color: Color(0xff0d76d3),
-                            textColor: Colors.white)
+                            textColor: Colors.white),
                       ],
                     ),
                   ],

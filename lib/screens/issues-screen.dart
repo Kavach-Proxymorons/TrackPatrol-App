@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/authProvider.dart';
+import '../services/issue-services.dart';
 
 class Issues extends StatefulWidget {
   const Issues({super.key});
@@ -9,9 +13,28 @@ class Issues extends StatefulWidget {
 }
 
 class _IssuesState extends State<Issues> {
+  late TextEditingController _descController;
+  bool _isloading = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _descController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _descController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AuthProvider>(context, listen: false);
+    provider.getPrefs();
     String dropdownValue = 'Select Category';
+
     return Scaffold(
       bottomSheet: buildBottomSheet(),
       appBar: AppBar(
@@ -59,6 +82,7 @@ class _IssuesState extends State<Issues> {
             Text("Description",
                 style: GoogleFonts.poppins(color: Colors.black)),
             TextFormField(
+              controller: _descController,
               decoration: InputDecoration(
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 50, horizontal: 10),
@@ -70,17 +94,35 @@ class _IssuesState extends State<Issues> {
             SizedBox(
               height: 20,
             ),
-            InkWell(
-              child: Container(
-                height: 40,
-                width: 130,
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Center(
-                  child: Text(
-                    "Submit",
-                    style: GoogleFonts.poppins(color: Colors.white),
+            Visibility(
+              visible: false,
+              child: InkWell(
+                onTap: () async {
+                  setState(() {
+                    _isloading = true;
+                  });
+                  var fetch = issuePost(
+                      provider.token.toString(),
+                      dropdownValue,
+                      _descController.text,
+                      provider.shiftID.toString());
+                  setState(() {
+                    _isloading = false;
+                  });
+                },
+                child: Container(
+                  height: 40,
+                  width: 130,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Center(
+                    child: _isloading
+                        ? CircularProgressIndicator()
+                        : Text(
+                            "Submit",
+                            style: GoogleFonts.poppins(color: Colors.white),
+                          ),
                   ),
                 ),
               ),
