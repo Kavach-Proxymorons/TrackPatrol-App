@@ -8,7 +8,7 @@ class DutyCard extends StatefulWidget {
   final String dutyName;
   final String location;
   final String timePeriod;
-  final String time;
+
   final String flag;
   final String date;
   final VoidCallback onTap;
@@ -18,7 +18,6 @@ class DutyCard extends StatefulWidget {
       required this.dutyName,
       required this.location,
       required this.timePeriod,
-      required this.time,
       required this.flag,
       required this.date,
       required this.onTap});
@@ -86,22 +85,18 @@ class _DutyCardState extends State<DutyCard> {
                 const SizedBox(
                   height: 8,
                 ),
-                Row(
-                  children: <Widget>[
-                    Image.asset(
-                      'images/time.png',
-                      height: 18,
-                      width: 12,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      widget.time,
-                      style: GoogleFonts.poppins(fontSize: 15),
-                    )
-                  ],
-                ),
+                // Row(
+                //   children: <Widget>[
+                //     Image.asset(
+                //       'images/time.png',
+                //       height: 18,
+                //       width: 12,
+                //     ),
+                //     const SizedBox(
+                //       width: 10,
+                //     ),
+                //   ],
+                // ),
                 SizedBox(
                   height: 10,
                 ),

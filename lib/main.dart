@@ -2,10 +2,12 @@ import 'package:Trackpatrol/app.dart';
 import 'package:Trackpatrol/providers/authProvider.dart';
 import 'package:Trackpatrol/providers/dutyTimerProvider.dart';
 import 'package:Trackpatrol/providers/locationProvider.dart';
+import 'package:Trackpatrol/providers/offline-provider.dart';
 import 'package:Trackpatrol/screens/dutiesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:Trackpatrol/screens/loginScreen.dart';
 import 'package:Trackpatrol/screens/splashScreen.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'maps/maps.dart';
@@ -25,38 +27,15 @@ void main() async {
         ChangeNotifierProvider<DutyTimerProvider>(
             create: (_) => DutyTimerProvider()),
         ChangeNotifierProvider(create: (_) => LocationProvider()),
+        ChangeNotifierProvider(create: (_) => OfflineProvider()),
       ],
-      child: MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        debugShowCheckedModeBanner: false,
-        home: SplashScreen(
-          prefs: prefs,
+      child: OverlaySupport.global(
+        child: MaterialApp(
+          theme: ThemeData(useMaterial3: true),
+          debugShowCheckedModeBanner: false,
+          home: SplashScreen(
+            prefs: prefs,
+          ),
         ),
       )));
 }
-
-// class MyApp extends StatefulWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   State<MyApp> createState() => _MyAppState();
-// }
-
-// class _MyAppState extends State<MyApp> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       theme: ThemeData(
-//         useMaterial3: true,
-//       ),
-//       debugShowCheckedModeBanner: false,
-//       initialRoute: '/splashScreen',
-//       routes: {
-//         '/login': (context) => LoginScreen(),
-//         '/duties': (context) => const DutiesPage(),
-//         '/mapRender': (context) => const MapRender(),
-//         '/splashScreen': (context) => SplashScreen(),
-//       },
-//     );
-//   }
-// }

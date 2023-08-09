@@ -15,7 +15,7 @@ class _BuildTabState extends State<BuildTab> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   static const List<Widget> _widgetOptions = <Widget>[
     DutiesPage(),
-    Issues()
+
     // OngoingDuties(),
   ];
 
@@ -61,6 +61,7 @@ class _BuildTabState extends State<BuildTab> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
               child: GNav(
+                mainAxisAlignment: MainAxisAlignment.center,
                 haptic: true,
                 rippleColor: Colors.grey[300]!,
                 hoverColor: Colors.grey[100]!,
@@ -76,10 +77,10 @@ class _BuildTabState extends State<BuildTab> {
                     icon: Icons.home,
                     text: 'Home',
                   ),
-                  GButton(
-                    icon: Icons.info_sharp,
-                    text: 'Issues',
-                  ),
+                  // GButton(
+                  //   icon: Icons.info_sharp,
+                  //   text: 'Issues',
+                  // ),
                   // GButton(
                   //   icon: Icons.wifi_protected_setup_sharp,
                   //   text: 'Ongoing Duties',

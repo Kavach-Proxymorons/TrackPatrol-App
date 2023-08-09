@@ -27,12 +27,9 @@ bool isSuccess = true;
 
 class MapBottomContainer extends StatefulWidget {
   const MapBottomContainer(
-      {super.key,
-      required this.date,
-      required this.timePeriod,
-      required this.location});
+      {super.key, required this.date, required this.location});
   final Widget date;
-  final Widget timePeriod;
+
   final Widget location;
 
   @override
@@ -102,21 +99,21 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                         widget.date
                       ],
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Image.asset(
-                          'images/timePeriod.png',
-                          height: 20,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        widget.timePeriod
-                      ],
-                    ),
+                    // SizedBox(
+                    //   height: 15,
+                    // ),
+                    // Row(
+                    //   children: <Widget>[
+                    //     Image.asset(
+                    //       'images/timePeriod.png',
+                    //       height: 20,
+                    //     ),
+                    //     SizedBox(
+                    //       width: 10,
+                    //     ),
+                    //     widget.timePeriod
+                    //   ],
+                    // ),
                     SizedBox(
                       height: 15,
                     ),
@@ -133,7 +130,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                       ],
                     ),
                     SizedBox(
-                      height: 15,
+                      height: 35,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
