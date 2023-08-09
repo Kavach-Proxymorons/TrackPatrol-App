@@ -10,6 +10,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,7 @@ import '../../background-svc/background-handler.dart';
 import '../../location_services/getCurrentLocation.dart';
 import '../../providers/authProvider.dart';
 import '../../providers/dutyTimerProvider.dart';
+import '../../services/issue-services.dart';
 import 'buttonForMapBottomSheetWidget.dart';
 import 'failedDialog.dart';
 import 'flagWidget.dart';
@@ -63,6 +65,16 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
   }
 
   DutyStartedModel? dutyStartedModel;
+  late TextEditingController _descController;
+  String dropdownValue = 'Select Category';
+  bool _isloading = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _descController = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
     final providerTimer = Provider.of<DutyTimerProvider>(context, listen: true);
@@ -70,6 +82,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
 
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             children: [
@@ -257,10 +270,108 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
               ),
               const Positioned(
                   top: 80,
-                  left: 300,
+                  left: 250,
                   child: FlagContainer(flag: 'High', flagColor: Colors.red))
             ],
           ),
+          Divider(
+            color: Colors.grey,
+            height: 4,
+            endIndent: 20,
+            indent: 20,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Text(
+              "Report Issue",
+              style: GoogleFonts.poppins(color: Colors.blue, fontSize: 20),
+            ),
+          ),
+          Text("Issue", style: GoogleFonts.poppins(color: Colors.black)),
+          DropdownButton<String>(
+            // Step 3.
+            value: dropdownValue,
+            // Step 4.
+            items: <String>[
+              'Select Category',
+              'Internet Issue',
+              'Network Issue',
+              'Battery Issue',
+              'Crowd Issue',
+              'Others',
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(
+                  value,
+                  style: GoogleFonts.poppins(fontSize: 15, color: Colors.grey),
+                ),
+              );
+            }).toList(),
+            // Step 5.
+            onChanged: (String? newValue) {
+              setState(() {
+                dropdownValue = newValue!;
+              });
+            },
+          ),
+          SizedBox(height: 20),
+          Text("Description", style: GoogleFonts.poppins(color: Colors.black)),
+          TextFormField(
+            controller: _descController,
+            decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 50, horizontal: 10),
+                hintText: "I have a problem regarding...",
+                hintStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black))),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Visibility(
+              visible: providerTimer.dutyStarted == "false" ? false : true,
+              child: InkWell(
+                onTap: () async {
+                  setState(() {
+                    _isloading = true;
+                  });
+                  var fetch = issuePost(
+                          providerauth.token.toString(),
+                          dropdownValue,
+                          _descController.text,
+                          providerauth.shiftID.toString())
+                      .whenComplete(() => showSimpleNotification(
+                          Text("Issue Status"),
+                          trailing: Text("Issue successfully reported"),
+                          background: Colors.green));
+                  setState(() {
+                    _isloading = false;
+                  });
+                },
+                child: Container(
+                  height: 40,
+                  width: 130,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Center(
+                    child: _isloading
+                        ? const CircularProgressIndicator.adaptive()
+                        : Text(
+                            "Submit",
+                            style: GoogleFonts.poppins(color: Colors.white),
+                          ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 10)
         ],
       ),
     );

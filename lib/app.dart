@@ -15,6 +15,7 @@ class _BuildTabState extends State<BuildTab> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   static const List<Widget> _widgetOptions = <Widget>[
     DutiesPage(),
+    IssuesRender(),
 
     // OngoingDuties(),
   ];
@@ -43,9 +44,7 @@ class _BuildTabState extends State<BuildTab> {
             false;
       },
       child: Scaffold(
-        body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
-        ),
+        body: _widgetOptions.elementAt(_selectedIndex),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -77,10 +76,10 @@ class _BuildTabState extends State<BuildTab> {
                     icon: Icons.home,
                     text: 'Home',
                   ),
-                  // GButton(
-                  //   icon: Icons.info_sharp,
-                  //   text: 'Issues',
-                  // ),
+                  GButton(
+                    icon: Icons.info_sharp,
+                    text: 'Notifications',
+                  ),
                   // GButton(
                   //   icon: Icons.wifi_protected_setup_sharp,
                   //   text: 'Ongoing Duties',

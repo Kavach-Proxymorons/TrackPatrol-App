@@ -45,4 +45,6 @@ class Utils {
           ),
         ),
       );
+
+  static void updateOfflineArray() {}
 }

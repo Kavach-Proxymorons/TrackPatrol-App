@@ -27,7 +27,7 @@ Completer<GoogleMapController> controllerg = Completer();
 bool isLoadingDate = false;
 bool isLoadingLocation = false;
 bool isLoadingTimePeriod = false;
-late StreamSubscription subscription;
+late StreamSubscription connectionSubscription;
 
 class MapRender extends StatefulWidget {
   const MapRender({super.key});
@@ -80,7 +80,7 @@ class _MapRenderState extends State<MapRender> {
     final offlineProvider =
         Provider.of<OfflineProvider>(context, listen: false);
     super.initState();
-    subscription =
+    connectionSubscription =
         Connectivity().onConnectivityChanged.listen(showConnectivitySnackBar);
 
     fetchDetailDuty = getDutiesDetail(
@@ -170,49 +170,53 @@ class _MapRenderState extends State<MapRender> {
     final provider = Provider.of<LocationProvider>(context, listen: false);
 
     return Scaffold(
-      bottomSheet: FutureBuilder(
-        future: fetchDetailDuty,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            isLoadingDate = true;
-            isLoadingLocation = true;
-            isLoadingTimePeriod = true;
+      bottomSheet: Container(
+        padding: EdgeInsets.only(left: 16, right: 16),
+        height: 320,
+        child: FutureBuilder(
+          future: fetchDetailDuty,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              isLoadingDate = true;
+              isLoadingLocation = true;
+              isLoadingTimePeriod = true;
 
-            return Container();
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            isLoadingDate = false;
-            isLoadingLocation = false;
-            isLoadingTimePeriod = false;
-          } else {
-            return const Text("error Finding data");
-          }
-          DateTime date =
-              DateTime.parse(snapshot.data!.data!.startTime.toString());
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            latLng = snapshot.data!.data!.duty!.location!.split(",");
-            dutylatitude = double.parse(latLng![0]);
-            dutylongitude = double.parse(latLng![1]);
-            geocode(dutylatitude!, dutylongitude!).then((value) {
-              setState(() {
-                loc = placemarks![0].locality.toString();
+              return Container();
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              isLoadingDate = false;
+              isLoadingLocation = false;
+              isLoadingTimePeriod = false;
+            } else {
+              return const Text("error Finding data");
+            }
+            DateTime date =
+                DateTime.parse(snapshot.data!.data!.startTime.toString());
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              latLng = snapshot.data!.data!.duty!.location!.split(",");
+              dutylatitude = double.parse(latLng![0]);
+              dutylongitude = double.parse(latLng![1]);
+              geocode(dutylatitude!, dutylongitude!).then((value) {
+                setState(() {
+                  loc = placemarks![0].locality.toString();
+                });
               });
             });
-          });
-          return MapBottomContainer(
-            date: isLoadingDate
-                ? const CircularProgressIndicator()
-                // ignore: prefer_interpolation_to_compose_strings
-                : Text(date.day.toString() +
-                    "/" +
-                    date.month.toString() +
-                    '/' +
-                    date.year.toString()),
-            // timePeriod: Text("00"),
-            location: isLoadingLocation
-                ? const CircularProgressIndicator.adaptive()
-                : Text(loc == null ? "Null" : loc!),
-          );
-        },
+            return MapBottomContainer(
+              date: isLoadingDate
+                  ? const CircularProgressIndicator()
+                  // ignore: prefer_interpolation_to_compose_strings
+                  : Text(date.day.toString() +
+                      "/" +
+                      date.month.toString() +
+                      '/' +
+                      date.year.toString()),
+              // timePeriod: Text("00"),
+              location: isLoadingLocation
+                  ? const CircularProgressIndicator.adaptive()
+                  : Text(loc == null ? "Null" : loc!),
+            );
+          },
+        ),
       ),
       // body: SingleChildScrollView(),
       body: SafeArea(
