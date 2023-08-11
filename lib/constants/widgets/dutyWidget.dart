@@ -8,7 +8,7 @@ class DutyCard extends StatefulWidget {
   final String dutyName;
   final String location;
   final String timePeriod;
-  final String time;
+
   final String flag;
   final String date;
   final VoidCallback onTap;
@@ -18,7 +18,6 @@ class DutyCard extends StatefulWidget {
       required this.dutyName,
       required this.location,
       required this.timePeriod,
-      required this.time,
       required this.flag,
       required this.date,
       required this.onTap});
@@ -36,7 +35,7 @@ class _DutyCardState extends State<DutyCard> {
         children: [
           Image.asset('images/1.png'),
           Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -46,7 +45,7 @@ class _DutyCardState extends State<DutyCard> {
                       fontSize: 18, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 8,
                 ),
                 Row(
                   children: <Widget>[
@@ -65,7 +64,7 @@ class _DutyCardState extends State<DutyCard> {
                   ],
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 8,
                 ),
                 Row(
                   children: <Widget>[
@@ -84,26 +83,22 @@ class _DutyCardState extends State<DutyCard> {
                   ],
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 8,
                 ),
-                Row(
-                  children: <Widget>[
-                    Image.asset(
-                      'images/time.png',
-                      height: 18,
-                      width: 12,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      widget.time,
-                      style: GoogleFonts.poppins(fontSize: 15),
-                    )
-                  ],
-                ),
+                // Row(
+                //   children: <Widget>[
+                //     Image.asset(
+                //       'images/time.png',
+                //       height: 18,
+                //       width: 12,
+                //     ),
+                //     const SizedBox(
+                //       width: 10,
+                //     ),
+                //   ],
+                // ),
                 SizedBox(
-                  height: 15,
+                  height: 10,
                 ),
                 FlagContainer(flag: 'High', flagColor: Colors.red)
               ],
@@ -111,7 +106,7 @@ class _DutyCardState extends State<DutyCard> {
           ),
           Positioned(
               top: 120,
-              left: 300,
+              left: 280,
               child: DateContainer(
                 date: widget.date,
               ))

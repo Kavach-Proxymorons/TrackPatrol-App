@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 import 'package:Trackpatrol/constants/widgets/confirmDialog.dart';
 import 'package:Trackpatrol/dutyServices/startDutyService.dart';
@@ -7,14 +6,19 @@ import 'package:Trackpatrol/maps/maps.dart';
 import 'package:Trackpatrol/models/dutyStartedModel.dart';
 import 'package:Trackpatrol/models/dutyStoppedModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../dutyServices/pushLocationService.dart';
+import '../../background-svc/background-handler.dart';
 import '../../location_services/getCurrentLocation.dart';
-import '../../screens/dutiesPage.dart';
-import '../../screens/loginScreen.dart';
+import '../../providers/authProvider.dart';
+import '../../providers/dutyTimerProvider.dart';
+import '../../services/issue-services.dart';
 import 'buttonForMapBottomSheetWidget.dart';
 import 'failedDialog.dart';
 import 'flagWidget.dart';
@@ -22,16 +26,12 @@ import 'flagWidget.dart';
 double? getLat;
 double? getLong;
 bool isSuccess = true;
-bool dutyStarted = false;
 
 class MapBottomContainer extends StatefulWidget {
   const MapBottomContainer(
-      {super.key,
-      required this.date,
-      required this.timePeriod,
-      required this.location});
+      {super.key, required this.date, required this.location});
   final Widget date;
-  final Widget timePeriod;
+
   final Widget location;
 
   @override
@@ -39,28 +39,25 @@ class MapBottomContainer extends StatefulWidget {
 }
 
 class _MapBottomContainerState extends State<MapBottomContainer> {
-  // Inside your StatefulWidget or StatelessWidget
-// or wherever you want to start the repeated function call
-  Timer? timer;
-  void startRepeatedFunctionCall() {
-    timer = Timer.periodic(Duration(seconds: 20), (Timer t) {
-      pushLoc(token!, shiftID!); // Call your function here
-    });
-  }
-
-  void stopRepeatedFunctionCall() {
-    if (timer!.isActive && timer != null) {
-      timer!.cancel();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    // Cancel the Timer when the widget is disposed
-    stopRepeatedFunctionCall();
-  }
-
+  bool _visibilityFlag = false;
+  // List<String?> _items = [
+  //   'Select Category',
+  //   'Internet Issue',
+  //   'Battery Issue',
+  //   'Crowd Issue',
+  //   'Sanitation Issue',
+  //   'Food Issue',
+  //   'Others',
+  // ];
+  Map<String, dynamic> _severity = {
+    'Select Category': '',
+    'Internet Issue': 'high',
+    'Battery Issue': 'low',
+    'Crowd Issue': 'meduim',
+    'Sanitation Issue': 'high',
+    'Food Issue': 'low',
+    'Others': 'low'
+  };
   showLoaderDialog(BuildContext ctx, String msg) {
     AlertDialog alert = AlertDialog(
       content: Row(
@@ -87,10 +84,32 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
   }
 
   DutyStartedModel? dutyStartedModel;
+  late TextEditingController _descController;
+  String dropdownValue = 'Select Category';
+  bool _isloading = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _descController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _descController.dispose();
+    _descController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final providerTimer = Provider.of<DutyTimerProvider>(context, listen: true);
+    final providerauth = Provider.of<AuthProvider>(context, listen: true);
+
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             children: [
@@ -120,21 +139,21 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                         widget.date
                       ],
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Image.asset(
-                          'images/timePeriod.png',
-                          height: 20,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        widget.timePeriod
-                      ],
-                    ),
+                    // SizedBox(
+                    //   height: 15,
+                    // ),
+                    // Row(
+                    //   children: <Widget>[
+                    //     Image.asset(
+                    //       'images/timePeriod.png',
+                    //       height: 20,
+                    //     ),
+                    //     SizedBox(
+                    //       width: 10,
+                    //     ),
+                    //     widget.timePeriod
+                    //   ],
+                    // ),
                     SizedBox(
                       height: 15,
                     ),
@@ -151,7 +170,7 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                       ],
                     ),
                     SizedBox(
-                      height: 15,
+                      height: 35,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -193,23 +212,41 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                           textColor: Color(0xff0d76d3),
                         ),
                         ButtonForBottomSheet(
-                            fun: dutyStarted == false
+                            fun: providerTimer.dutyStarted == "false"
                                 ? () async {
                                     DateTime currentDateTime =
                                         DateTime.now().toUtc();
                                     showLoaderDialog(
                                         context, "Starting your duty...");
-                                    log(currentDateTime.toUtc().toString());
+                                    SharedPreferences _prefs =
+                                        await SharedPreferences.getInstance();
+                                    _prefs.setString('shiftID',
+                                        providerauth.shiftID.toString());
                                     dutyStartedModel = await startDuty(
-                                        token!,
-                                        shiftID!,
+                                        providerauth.token!,
+                                        providerauth.shiftID!,
                                         currentDateTime.toUtc().toString());
                                     if (dutyStartedModel != null) {
-                                      startRepeatedFunctionCall();
+                                      initializeService(context);
+                                      // ignore: use_build_context_synchronously
+                                      FlutterBackgroundService().invoke(
+                                        'setAsForeground',
+                                      );
+                                      FlutterBackgroundService()
+                                          .invoke('setAsBackground');
+                                      providerTimer
+                                          .startRepeatedFunctionCall(context);
+                                      // ignore: use_build_context_synchronously
+
                                       Navigator.pop(context);
                                       showConfirmDialog(context);
                                       setState(() {
-                                        dutyStarted = true;
+                                        providerTimer
+                                            .updateDutyStartFlag("true");
+                                        _prefs.setString(
+                                            'dutyStarted',
+                                            providerTimer.dutyStarted
+                                                .toString());
                                       });
                                     } else {
                                       Navigator.pop(context);
@@ -221,15 +258,26 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                         DateTime.now().toUtc();
                                     showLoaderDialog(
                                         context, "Stopping your duty...");
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
                                     DutyStoppedModel? dutyStoppedModel =
-                                        await stopDuty(token!, shiftID!,
+                                        await stopDuty(
+                                            providerauth.token!,
+                                            providerauth.shiftID!,
                                             currentDateTime.toUtc().toString());
 
                                     if (dutyStoppedModel != null) {
-                                      stopRepeatedFunctionCall();
+                                      FlutterBackgroundService()
+                                          .invoke('stopService');
+                                      providerTimer.stopPushingGPS();
                                       Navigator.pop(context);
                                       setState(() {
-                                        dutyStarted = false;
+                                        providerTimer
+                                            .updateDutyStartFlag("false");
+                                        prefs.setString(
+                                            'dutyStarted',
+                                            providerTimer.dutyStarted
+                                                .toString());
                                       });
                                       Navigator.pop(context);
                                     } else {
@@ -237,9 +285,11 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                                       showFailedDialog(context);
                                     }
                                   },
-                            title: dutyStarted == false ? 'Start' : 'Stop',
+                            title: providerTimer.dutyStarted == "false"
+                                ? 'Start'
+                                : 'Stop',
                             color: Color(0xff0d76d3),
-                            textColor: Colors.white)
+                            textColor: Colors.white),
                       ],
                     ),
                   ],
@@ -247,10 +297,117 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
               ),
               const Positioned(
                   top: 80,
-                  left: 300,
+                  left: 250,
                   child: FlagContainer(flag: 'High', flagColor: Colors.red))
             ],
           ),
+          Divider(
+            color: Colors.grey,
+            height: 4,
+            endIndent: 20,
+            indent: 20,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Text(
+              "Report Issue",
+              style: GoogleFonts.poppins(color: Colors.blue, fontSize: 20),
+            ),
+          ),
+          Text("Issue", style: GoogleFonts.poppins(color: Colors.black)),
+          DropdownButton<String>(
+            // Step 3.
+            value: dropdownValue,
+            // Step 4.
+            items: <String>[
+              'Select Category',
+              'Internet Issue',
+              'Battery Issue',
+              'Crowd Issue',
+              'Sanitation Issue',
+              'Food Issue',
+              'Others',
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(
+                  value,
+                  style: GoogleFonts.poppins(fontSize: 15, color: Colors.grey),
+                ),
+              );
+            }).toList(),
+            // Step 5.
+            onChanged: (String? newValue) {
+              setState(() {
+                dropdownValue = newValue!;
+              });
+            },
+          ),
+          SizedBox(height: 20),
+          Text("Description", style: GoogleFonts.poppins(color: Colors.black)),
+          TextFormField(
+            controller: _descController,
+            decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 50, horizontal: 10),
+                hintText: "I have a problem regarding...",
+                hintStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black))),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Visibility(
+              visible: providerTimer.dutyStarted == "false" ? false : true,
+              child: InkWell(
+                onTap: () async {
+                  setState(() {
+                    _isloading = true;
+                  });
+                  var fetch = issuePost(
+                    providerauth.token.toString(),
+                    dropdownValue,
+                    _descController.text,
+                    providerauth.shiftID.toString(),
+                    _severity[dropdownValue].toString(),
+                  )
+                      .whenComplete(() => showSimpleNotification(
+                          Text("Issue Status"),
+                          trailing: Text("Issue successfully reported"),
+                          background: Colors.green))
+                      .then((value) {
+                    setState(() {
+                      _descController.clear();
+                      dropdownValue = "Select Category";
+                    });
+                  });
+                  setState(() {
+                    _isloading = false;
+                  });
+                },
+                child: Container(
+                  height: 40,
+                  width: 130,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Center(
+                    child: _isloading
+                        ? const CircularProgressIndicator.adaptive()
+                        : Text(
+                            "Submit",
+                            style: GoogleFonts.poppins(color: Colors.white),
+                          ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 10)
         ],
       ),
     );
