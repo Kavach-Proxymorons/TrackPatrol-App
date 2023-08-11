@@ -39,6 +39,25 @@ class MapBottomContainer extends StatefulWidget {
 }
 
 class _MapBottomContainerState extends State<MapBottomContainer> {
+  bool _visibilityFlag = false;
+  // List<String?> _items = [
+  //   'Select Category',
+  //   'Internet Issue',
+  //   'Battery Issue',
+  //   'Crowd Issue',
+  //   'Sanitation Issue',
+  //   'Food Issue',
+  //   'Others',
+  // ];
+  Map<String, dynamic> _severity = {
+    'Select Category': '',
+    'Internet Issue': 'high',
+    'Battery Issue': 'low',
+    'Crowd Issue': 'meduim',
+    'Sanitation Issue': 'high',
+    'Food Issue': 'low',
+    'Others': 'low'
+  };
   showLoaderDialog(BuildContext ctx, String msg) {
     AlertDialog alert = AlertDialog(
       content: Row(
@@ -73,6 +92,14 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
     // TODO: implement initState
     super.initState();
     _descController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _descController.dispose();
+    _descController.clear();
   }
 
   @override
@@ -297,9 +324,10 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
             items: <String>[
               'Select Category',
               'Internet Issue',
-              'Network Issue',
               'Battery Issue',
               'Crowd Issue',
+              'Sanitation Issue',
+              'Food Issue',
               'Others',
             ].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -341,14 +369,22 @@ class _MapBottomContainerState extends State<MapBottomContainer> {
                     _isloading = true;
                   });
                   var fetch = issuePost(
-                          providerauth.token.toString(),
-                          dropdownValue,
-                          _descController.text,
-                          providerauth.shiftID.toString())
+                    providerauth.token.toString(),
+                    dropdownValue,
+                    _descController.text,
+                    providerauth.shiftID.toString(),
+                    _severity[dropdownValue].toString(),
+                  )
                       .whenComplete(() => showSimpleNotification(
                           Text("Issue Status"),
                           trailing: Text("Issue successfully reported"),
-                          background: Colors.green));
+                          background: Colors.green))
+                      .then((value) {
+                    setState(() {
+                      _descController.clear();
+                      dropdownValue = "Select Category";
+                    });
+                  });
                   setState(() {
                     _isloading = false;
                   });

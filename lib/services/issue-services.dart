@@ -5,11 +5,15 @@ import 'package:http/http.dart' as http;
 
 import '../constants/links/apiProductionLink.dart';
 
-Future<bool?> issuePost(
-    String token, String issue, String description, String shiftID) async {
+Future<bool?> issuePost(String token, String issue, String description,
+    String shiftID, String severity) async {
   var response = await http.post(
       Uri.parse("$prodLink/api/v1/app/duty/$shiftID/post_issue"),
-      body: jsonEncode({"issue_category": issue, "description": description}),
+      body: jsonEncode({
+        "issue_category": issue,
+        "description": description,
+        "severity": severity
+      }),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'

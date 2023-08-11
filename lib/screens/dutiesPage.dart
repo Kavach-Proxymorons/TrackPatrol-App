@@ -170,9 +170,8 @@ class _DutiesPageState extends State<DutiesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.menu),
+        // leading: Icon(Icons.menu),
         actions: [
-          Icon(Icons.account_circle_rounded),
           PopUp(),
           SizedBox(
             width: 10,
